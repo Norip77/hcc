@@ -1,6 +1,5 @@
-CFLAGS=c11 -g -static
-
 hcc: main.c
+	cc -o hcc main.c
 
 test: hcc
 	./test.sh
