@@ -1,7 +1,5 @@
 #include "hcc.h"
 
-
-
 Token* new_token(TokenKind kind, Token *cur, char *str, int len){
     Token *tok = calloc(1, sizeof(Token));
     tok->kind = kind;
@@ -28,7 +26,7 @@ Token* tokenize(char *p){
             continue;
         }
 
-        if(strchr("+-*/()<>", *p)){
+        if(strchr("+-*/()<>;=", *p)){
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;
         }
@@ -38,6 +36,11 @@ Token* tokenize(char *p){
             char *q = p;
             cur->val = strtol(p, &p, 10);
             cur->len = p - q;
+            continue;
+        }
+
+        if('a' <= *p && *p <= 'z'){
+            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 

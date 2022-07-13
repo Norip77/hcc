@@ -1,14 +1,8 @@
 #include "hcc.h"
 
-Token *token;
+static Token *token;
 
-static Node* expr();
-static Node* equality();
-static Node* relation();
-static Node* add();
-static Node* mul();
-static Node* primary();
-static Node* unary();
+
 
 Node* new_node(NodeKind kind){
     Node *node = calloc(1, sizeof(Node));
@@ -44,6 +38,15 @@ void expect(char *op){
     token = token->next;
 }
 
+Token* consume_ident(){
+    if(token->kind != TK_IDENT){
+        return NULL;
+    }
+    Token* p = token;
+    token = token->next;
+    return p;
+}
+
 int expect_number(){
     if (token->kind != TK_NUM){
         error("not number");
@@ -53,8 +56,47 @@ int expect_number(){
     return val;
 }
 
+bool at_eof(){
+    return token->kind == TK_EOF;
+}
+
+static void program();
+static Node* stmt();
+static Node* expr();
+static Node* assign();
+static Node* equality();
+static Node* relation();
+static Node* add();
+static Node* mul();
+static Node* primary();
+static Node* unary();
+
+static Node *code[100];
+
+static void program(){
+    int i = 0;
+    while(!at_eof()){
+        code[i++] = stmt();
+    }
+    code[i] = NULL;
+}
+
+static Node* stmt(){
+    Node *node = expr();
+    expect(";");
+    return node;
+}
+
 static Node* expr(){
-    return equality();
+    return assign();
+}
+
+static Node* assign(){
+    Node *node = equality();
+    if(consume("=")){
+        node = new_binary(ND_ASSIGN, node, equality());
+    }
+    return node;
 }
 
 static Node* equality(){
@@ -133,10 +175,18 @@ static Node* primary(){
         expect(")");
         return node;
     }
+    Token* tok = consume_ident();
+    if(tok){
+        Node *node = calloc(1, sizeof(Node));
+        node->kind = ND_LVAR;
+        node->offset = (tok->str[0] - 'a' + 1) * 8;
+        return node;
+    }
     return new_num(expect_number());
 }
 
-Node* parse(Token *tok){
+Node** parse(Token *tok){
     token = tok;
-    return expr();
+    program();
+    return code;
 }

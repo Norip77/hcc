@@ -33,14 +33,23 @@ int main(int argc, char **argv){
 
     Token *token = tokenize(argv[1]);
 
-    Node *node = parse(token);
+    Node **code = parse(token);
 
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
     printf("main:\n");
 
-    codegen(node);
-    printf("\tpop rax\n");
+    printf("\tpush rbp\n");
+    printf("\tmov rbp, rsp\n");
+    printf("\tsub rsp, 208\n");
+
+
+    for(int i = 0; code[i]; ++i){
+        codegen(code[i]);
+        printf("\tpop rax\n");
+    }
+    printf("\tmov rsp,rbp\n");
+    printf("\tpop rbx\n");
         
     printf("\tret\n");
     return 0;
