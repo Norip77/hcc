@@ -52,4 +52,7 @@ assert 5 "d = 5;"
 assert 30 "a = 10; b = 20; c = 30;"
 assert 32 "x = 4; y = 9; z = x * (y - 1);"
 
+assert 3 "pi = 3;"
+assert 150 "height = 10; width = 15; area = height * width;"
+
 echo OK 

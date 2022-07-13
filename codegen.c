@@ -26,7 +26,7 @@ void codegen(Node *node){
 
             printf("\tpop rdi\n");
             printf("\tpop rax\n");
-            printf("mov [rax], rdi\n");
+            printf("\tmov [rax], rdi\n");
             printf("\tpush rdi\n");
             return;
     }
