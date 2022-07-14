@@ -39,6 +39,12 @@ Token* tokenize(char *p){
             continue;
         }
 
+        if(!strncmp(p, "return", 6) && !isalnum(p[6]) && p[6] != '_'){
+            cur = new_token(TK_RETURN, cur, p, 6);
+            p += 6;
+            continue;
+        }
+
         if(isalpha(*p)){
             int len = 1;
             ++p;

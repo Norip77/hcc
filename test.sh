@@ -55,4 +55,8 @@ assert 32 "x = 4; y = 9; z = x * (y - 1);"
 assert 3 "pi = 3;"
 assert 150 "height = 10; width = 15; area = height * width;"
 
+assert 3 "return 3;"
+assert 4 "return 4; return 5;"
+assert 7 "2*3; return_x = 7; return return_x;"
+
 echo OK 

@@ -51,7 +51,7 @@ bool consume(char *op){
 
 void expect(char *op){
     if(token->kind != TK_RESERVED || strlen(op) != token->len || strncmp(token->str, op, token->len)){
-        error_at(token->str, "%c cant be", op);
+        error_at(token->str, "%c cant be", *op);
     }
     token = token->next;
 }
@@ -63,6 +63,14 @@ Token* consume_ident(){
     Token* p = token;
     token = token->next;
     return p;
+}
+
+bool consume_return(){
+    if(token->kind != TK_RETURN){
+        return false;
+    }
+    token = token->next;
+    return true;
 }
 
 int expect_number(){
@@ -100,7 +108,13 @@ static void program(){
 }
 
 static Node* stmt(){
-    Node *node = expr();
+    Node *node;
+
+    if(consume_return()){
+        node = new_binary(ND_RETURN, expr(), NULL);
+    }else{
+        node = expr();
+    }
     expect(";");
     return node;
 }
