@@ -131,6 +131,25 @@ static Node* stmt(){
         return node;
     }
 
+    if(consume_tokkind(TK_FOR)){
+        expect("(");
+        Node *node = new_binary(ND_FOR, new_node(0), new_node(0));
+        if(!consume(";")){
+            node->lhs->lhs = expr();
+            expect(";");
+        }
+        if(!consume(";")){
+            node->lhs->rhs = expr();
+            expect(";");
+        }
+        if(!consume(")")){
+            node->rhs->lhs = expr();
+            expect(")");
+        }
+        node->rhs->rhs = stmt();
+        return node;
+    }
+
     if(consume_tokkind(TK_RETURN)){
         node = new_binary(ND_RETURN, expr(), NULL);
     }else{

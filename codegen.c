@@ -38,6 +38,19 @@ void codegen(Node *node){
             printf("\tjmp .Lbegin%d\n", tmpln);
             printf(".Lend%d:\n", tmpln);
             return;
+        case ND_FOR:
+            tmpln = labelnum++;
+            codegen(node->lhs->lhs);
+            printf(".Lbegin%d:", tmpln);
+            codegen(node->lhs->rhs);
+            printf("\tpop rax\n");
+            printf("\tcmp rax, 0\n");
+            printf("je .Lend%d\n", tmpln);
+            codegen(node->rhs->rhs);
+            codegen(node->rhs->lhs);
+            printf("\tjmp .Lbegin%d\n", tmpln);
+            printf(".Lend%d:\n", tmpln);
+            return;
         case ND_RETURN:
             codegen(node->lhs);
             printf("\tpop rax\n");
