@@ -112,9 +112,7 @@ static void program(){
 static Node* stmt(){
     Node *node;
 
-    if(consume_tokkind(TK_RETURN)){
-        node = new_binary(ND_RETURN, expr(), NULL);
-    }else if(consume_tokkind(TK_IF)){
+    if(consume_tokkind(TK_IF)){
         expect("(");
         node = new_binary(ND_IF, expr(), new_node(ND_ELSE));
         expect(")");
@@ -123,6 +121,18 @@ static Node* stmt(){
             node->rhs->rhs = stmt();
         }
         return node;
+    }
+
+    if(consume_tokkind(TK_WHILE)){
+        expect("(");
+        node = new_binary(ND_WHILE, expr(), NULL);
+        expect(")");
+        node->rhs = stmt();
+        return node;
+    }
+
+    if(consume_tokkind(TK_RETURN)){
+        node = new_binary(ND_RETURN, expr(), NULL);
     }else{
         node = expr();
     }

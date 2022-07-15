@@ -1,5 +1,18 @@
 #include "hcc.h"
 
+static struct
+{
+    char *key;
+    int token;
+}keywords[] = {
+    {"return", TK_RETURN},
+    {"if", TK_IF},
+    {"else", TK_ELSE},
+    {"while", TK_WHILE},
+    {"for", TK_FOR},
+    {NULL, 0}
+};
+
 Token* new_token(TokenKind kind, Token *cur, char *str, int len){
     Token *tok = calloc(1, sizeof(Token));
     tok->kind = kind;
@@ -7,6 +20,17 @@ Token* new_token(TokenKind kind, Token *cur, char *str, int len){
     tok->len = len;
     cur->next = tok;
     return tok;
+}
+
+int find_keyword(char *key){
+    int len;
+    for(int i = 0;keywords[i].key;++i){
+        len = strlen(keywords[i].key);
+        if(!strncmp(keywords[i].key, key, len) && !isalnum(key[len]) && key[len] != '_'){
+            return i;
+        }
+    }
+    return -1;
 }
 
 Token* tokenize(char *p){
@@ -39,33 +63,11 @@ Token* tokenize(char *p){
             continue;
         }
 
-        if(!strncmp(p, "return", 6) && !isalnum(p[6]) && p[6] != '_'){
-            cur = new_token(TK_RETURN, cur, p, 6);
-            p += 6;
-            continue;
-        }
-
-        if(!strncmp(p, "if", 2) && !isalnum(p[2]) && p[2] != '_'){
-            cur = new_token(TK_IF, cur, p, 2);
-            p += 2;
-            continue;
-        }
-        
-        if(!strncmp(p, "else", 4) && !isalnum(p[4]) && p[4] != '_'){
-            cur = new_token(TK_ELSE, cur, p, 4);
-            p += 4;
-            continue;
-        }
-
-        if(!strncmp(p, "while", 5) && !isalnum(p[5]) && p[5] != '_'){
-            cur = new_token(TK_WHILE, cur, p, 5);
-            p += 5;
-            continue;
-        }
-
-        if(!strncmp(p, "for", 3) && !isalnum(p[3]) && p[3] != '_'){
-            cur = new_token(TK_FOR, cur, p, 3);
-            p += 3;
+        int id = find_keyword(p);
+        if(id != -1){
+            int len = strlen(keywords[id].key);
+            cur = new_token(keywords[id].token, cur, p, len);
+            p += len;
             continue;
         }
 

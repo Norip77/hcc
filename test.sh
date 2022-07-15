@@ -68,4 +68,8 @@ assert 10 "abc = 3; if(abc > 9) return 5; return 10;"
 assert 7 "if(1 == 2) return 1; else return 7;"
 assert 1 "age = 22; if(age >= 20) candrink = 1; else candrink = 0; return candrink;"
 
+assert 3 "while(0) 1; return 3;"
+assert 0 "a = 5; while(a = a - 1) 1; return a;"
+assert 45 "a = 10;b = 0; while(a = a - 1) b = b + a;"
+assert 3 "abc = 10; while(abc = abc - 1) if(abc == 3) return abc;"
 echo OK 
