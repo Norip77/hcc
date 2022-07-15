@@ -63,5 +63,6 @@ assert 2 "return(1+1);"
 assert 3 "if(1) return 3;"
 assert 5 "abc = 3; if(abc == 3) return 5;"
 assert 5 "abc = 3; if(abc < 9) return 5;"
+assert 10 "abc = 3; if(abc > 9) return 5; return 10;"
 
 echo OK 

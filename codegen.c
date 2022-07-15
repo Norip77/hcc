@@ -9,8 +9,18 @@ static void gen_lval(Node *node){
     printf("\tpush rax\n");
 }
 
+int labelnum;
+
 void codegen(Node *node){
     switch(node->kind){
+        case ND_IF:
+            codegen(node->lhs);
+            printf("\tpop rax\n");
+            printf("\tcmp rax, 0\n");
+            printf("\tje .Lend%d\n", labelnum);
+            codegen(node->rhs);
+            printf(".Lend%d:\n", labelnum++);
+            return;
         case ND_RETURN:
             codegen(node->lhs);
             printf("\tpop rax\n");
