@@ -23,7 +23,7 @@ void codegen(Node *node){
             printf("\tje .Lelse%d\n", tmpln);
             codegen(node->rhs->lhs);
             printf("\tjmp .Lend%d\n", tmpln);
-            printf("\t.Lelse%d:\n", tmpln);
+            printf(".Lelse%d:\n", tmpln);
             codegen(node->rhs->rhs);
             printf(".Lend%d:\n", tmpln);
             return;
@@ -39,13 +39,17 @@ void codegen(Node *node){
             printf(".Lend%d:\n", tmpln);
             return;
         case ND_FOR:
-            tmpln = labelnum++;
+            tmpln = labelnum++; 
             codegen(node->lhs->lhs);
-            printf(".Lbegin%d:", tmpln);
-            codegen(node->lhs->rhs);
+            printf(".Lbegin%d:\n", tmpln);
+            if(node->lhs->rhs){
+                codegen(node->lhs->rhs);
+            }else{
+                printf("\tpush 1\n");
+            }
             printf("\tpop rax\n");
             printf("\tcmp rax, 0\n");
-            printf("je .Lend%d\n", tmpln);
+            printf("\tje .Lend%d\n", tmpln);
             codegen(node->rhs->rhs);
             codegen(node->rhs->lhs);
             printf("\tjmp .Lbegin%d\n", tmpln);

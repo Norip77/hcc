@@ -74,6 +74,7 @@ assert 45 "a = 10;b = 0; while(a = a - 1) b = b + a;"
 assert 3 "abc = 10; while(abc = abc - 1) if(abc == 3) return abc;"
 
 assert 45 "b = 0; for(a = 0;a < 10;a = a + 1) b = b + a; return b;"
-assert 16 "a = 1; for(;a < 10;) a = a * 2; return a;"
+assert 16 "a = 8; if((a = a * 2) > 10) return a;"
+assert 16 "a = 2; for(;;) if((a = a * 2) > 10) return a;"
 
 echo OK 
