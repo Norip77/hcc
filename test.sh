@@ -58,5 +58,10 @@ assert 150 "height = 10; width = 15; area = height * width;"
 assert 3 "return 3;"
 assert 4 "return 4; return 5;"
 assert 7 "2*3; return_x = 7; return return_x;"
+assert 2 "return(1+1);"
+
+assert 3 "if(1) return 3;"
+assert 5 "abc = 3; if(abc == 3) return 5;"
+assert 5 "abc = 3; if(abc < 9) return 5;"
 
 echo OK 

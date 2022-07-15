@@ -65,13 +65,15 @@ Token* consume_ident(){
     return p;
 }
 
-bool consume_return(){
-    if(token->kind != TK_RETURN){
+bool consume_tokkind(TokenKind kind){
+    if(token->kind != kind){
         return false;
     }
     token = token->next;
     return true;
 }
+
+
 
 int expect_number(){
     if (token->kind != TK_NUM){
@@ -110,8 +112,14 @@ static void program(){
 static Node* stmt(){
     Node *node;
 
-    if(consume_return()){
+    if(consume_tokkind(TK_RETURN)){
         node = new_binary(ND_RETURN, expr(), NULL);
+    }else if(consume_tokkind(TK_IF)){
+        expect("(");
+        node = new_binary(ND_IF, expr(), NULL);
+        expect(")");
+        node->rhs = stmt();
+        return node;
     }else{
         node = expr();
     }

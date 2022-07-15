@@ -45,6 +45,30 @@ Token* tokenize(char *p){
             continue;
         }
 
+        if(!strncmp(p, "if", 2) && !isalnum(p[2]) && p[2] != '_'){
+            cur = new_token(TK_IF, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        
+        if(!strncmp(p, "else", 2) && !isalnum(p[4]) && p[4] != '_'){
+            cur = new_token(TK_ELSE, cur, p, 4);
+            p += 4;
+            continue;
+        }
+
+        if(!strncmp(p, "while", 5) && !isalnum(p[5]) && p[5] != '_'){
+            cur = new_token(TK_WHILE, cur, p, 5);
+            p += 5;
+            continue;
+        }
+
+        if(!strncmp(p, "for", 3) && !isalnum(p[3]) && p[3] != '_'){
+            cur = new_token(TK_FOR, cur, p, 3);
+            p += 3;
+            continue;
+        }
+
         if(isalpha(*p)){
             int len = 1;
             ++p;
