@@ -65,4 +65,7 @@ assert 5 "abc = 3; if(abc == 3) return 5;"
 assert 5 "abc = 3; if(abc < 9) return 5;"
 assert 10 "abc = 3; if(abc > 9) return 5; return 10;"
 
+assert 7 "if(1 == 2) return 1; else return 7;"
+assert 1 "age = 22; if(age >= 20) candrink = 1; else candrink = 0; return candrink;"
+
 echo OK 

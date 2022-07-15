@@ -116,9 +116,12 @@ static Node* stmt(){
         node = new_binary(ND_RETURN, expr(), NULL);
     }else if(consume_tokkind(TK_IF)){
         expect("(");
-        node = new_binary(ND_IF, expr(), NULL);
+        node = new_binary(ND_IF, expr(), new_node(ND_ELSE));
         expect(")");
-        node->rhs = stmt();
+        node->rhs->lhs = stmt();
+        if(consume_tokkind(TK_ELSE)){
+            node->rhs->rhs = stmt();
+        }
         return node;
     }else{
         node = expr();

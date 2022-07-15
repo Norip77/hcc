@@ -51,7 +51,7 @@ Token* tokenize(char *p){
             continue;
         }
         
-        if(!strncmp(p, "else", 2) && !isalnum(p[4]) && p[4] != '_'){
+        if(!strncmp(p, "else", 4) && !isalnum(p[4]) && p[4] != '_'){
             cur = new_token(TK_ELSE, cur, p, 4);
             p += 4;
             continue;

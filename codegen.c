@@ -12,14 +12,23 @@ static void gen_lval(Node *node){
 int labelnum;
 
 void codegen(Node *node){
+    if(node == NULL) return;
+    int tmpln;
     switch(node->kind){
         case ND_IF:
+            tmpln = labelnum++;
             codegen(node->lhs);
             printf("\tpop rax\n");
             printf("\tcmp rax, 0\n");
-            printf("\tje .Lend%d\n", labelnum);
-            codegen(node->rhs);
-            printf(".Lend%d:\n", labelnum++);
+            printf("\tje .Lelse%d\n", tmpln);
+            codegen(node->rhs->lhs);
+            printf("\tjmp .Lend%d\n", tmpln);
+            printf("\t.Lelse%d:\n", tmpln);
+            codegen(node->rhs->rhs);
+            printf(".Lend%d:\n", tmpln);
+            return;
+        case ND_ELSE:
+            tmpln = labelnum++;
             return;
         case ND_RETURN:
             codegen(node->lhs);
