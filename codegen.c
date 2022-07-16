@@ -55,6 +55,11 @@ void codegen(Node *node){
             printf("\tjmp .Lbegin%d\n", tmpln);
             printf(".Lend%d:\n", tmpln);
             return;
+        case ND_BLOCK:
+            for(Node *n = node->block; n; n = n->block){
+                codegen(n);
+            }
+            return;
         case ND_RETURN:
             codegen(node->lhs);
             printf("\tpop rax\n");

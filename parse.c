@@ -41,6 +41,7 @@ Node *new_num(int val){
     return node;
 }
 
+
 bool consume(char *op){
     if(token->kind != TK_RESERVED || strlen(op) != token->len || strncmp(token->str, op, token->len)){
         return false;
@@ -77,7 +78,7 @@ bool consume_tokkind(TokenKind kind){
 
 int expect_number(){
     if (token->kind != TK_NUM){
-        error("not number");
+        error_at(token->str, "not number");
     }
     int val = token->val;
     token = token->next;
@@ -99,6 +100,17 @@ static Node* mul();
 static Node* primary();
 static Node* unary();
 
+Node *new_block(){
+    Node *head, **bb;
+    bb = &head;
+    while(!consume("}")){
+        *bb = stmt();
+        bb = &(*bb)->block;
+    }
+    return head;
+}
+
+
 static Node *code[100];
 
 static void program(){
@@ -111,6 +123,12 @@ static void program(){
 
 static Node* stmt(){
     Node *node;
+
+    if(consume("{")){
+        node = new_node(ND_BLOCK);
+        node->block = new_block();
+        return node;
+    }
 
     if(consume_tokkind(TK_IF)){
         expect("(");
@@ -249,8 +267,7 @@ static Node* primary(){
     }
     Token* tok = consume_ident();
     if(tok){
-        Node *node = calloc(1, sizeof(Node));
-        node->kind = ND_LVAR;
+        Node *node = new_node(ND_LVAR);
         
         LVar *lvar = find_lvar(tok);
         if(lvar){

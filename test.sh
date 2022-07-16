@@ -77,4 +77,6 @@ assert 45 "b = 0; for(a = 0;a < 10;a = a + 1) b = b + a; return b;"
 assert 16 "a = 8; if((a = a * 2) > 10) return a;"
 assert 16 "a = 2; for(;;) if((a = a * 2) > 10) return a;"
 
+assert 1 "if(1 == 1){return 1;}"
+assert 5 "for(i = 0; i < 10;){i = i + 1; if(i == 5){return i;}}"
 echo OK 
