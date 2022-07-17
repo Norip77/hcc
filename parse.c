@@ -110,6 +110,18 @@ Node *new_block(){
     return head;
 }
 
+Node *new_args(){
+    if(consume(")")) return NULL;
+    Node *head = expr();
+    Node **pp = &head;
+    while (!consume(")")){
+        expect(",");
+        pp = &(*pp)->args;
+        *pp = expr();
+    }
+    return head;
+}
+
 
 static Node *code[100];
 
@@ -267,6 +279,14 @@ static Node* primary(){
     }
     Token* tok = consume_ident();
     if(tok){
+        if(consume("(")){
+            Node *node = new_node(ND_CALL);
+            node->name = tok->str;
+            node->len = tok->len;
+            node->args = new_args();
+            return node;
+        }
+
         Node *node = new_node(ND_LVAR);
         
         LVar *lvar = find_lvar(tok);

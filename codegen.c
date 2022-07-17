@@ -10,10 +10,13 @@ static void gen_lval(Node *node){
 }
 
 int labelnum;
+char *args[6] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+char name[64];
 
 void codegen(Node *node){
     if(node == NULL) return;
     int tmpln;
+    int i = 0;
     switch(node->kind){
         case ND_IF:
             tmpln = labelnum++;
@@ -59,6 +62,17 @@ void codegen(Node *node){
             for(Node *n = node->block; n; n = n->block){
                 codegen(n);
             }
+            return;
+        case ND_CALL:
+            
+            strncpy(name, node->name, node->len);
+            for(; node->args; node = node->args, ++i){
+                codegen(node->args);
+            }
+            for(int j = i - 1; j >= 0; --j){
+                printf("\tpop %s\n", args[j]);
+            }
+            printf("\tcall %s\n", name);
             return;
         case ND_RETURN:
             codegen(node->lhs);
