@@ -267,6 +267,12 @@ static Node* unary(){
     if(consume("-")){
         return new_binary(ND_SUB, new_num(0), primary());
     }
+    if(consume("&")){
+        return new_binary(ND_ADDR, unary(), NULL);
+    }
+    if(consume("*")){
+        return new_binary(ND_DEREF, unary(), NULL);
+    }
     return primary();
 }
 

@@ -79,4 +79,7 @@ assert 16 "a = 2; for(;;) if((a = a * 2) > 10) return a;"
 
 assert 1 "if(1 == 1){return 1;}"
 assert 5 "for(i = 0; i < 10;){i = i + 1; if(i == 5){return i;}}"
+
+assert 3 "x = 3; y = &x; return *y;"
+assert 3 "x = 3; y = 5; z = &y + 8; return *z;"
 echo OK 
