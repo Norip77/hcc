@@ -73,6 +73,7 @@ void codegen(Node *node){
                 printf("\tpop %s\n", args[j]);
             }
             printf("\tcall %s\n", name);
+            printf("\tpush rax\n");
             return;
         case ND_ADDR:
             gen_lval(node->lhs);

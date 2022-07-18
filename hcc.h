@@ -48,14 +48,17 @@ typedef enum{
     ND_WHILE,
     ND_FOR,
     ND_BLOCK,
+    ND_FUNC,
     ND_CALL,
     ND_ADDR,
     ND_DEREF
 } NodeKind;
 
 typedef struct Node Node;
+typedef struct Type Type;
 struct Node{
     NodeKind kind;
+    Type *ty;
     Node *lhs;
     Node *rhs;
     Node *block;
@@ -64,6 +67,17 @@ struct Node{
     int val;
     int offset;
     Node *args;
+};
+
+typedef enum{
+    TY_INT,
+    TY_PTR
+}TypeKind;
+
+struct Type
+{
+    TypeKind kind;
+    Type *base;
 };
 
 

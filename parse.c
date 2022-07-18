@@ -90,6 +90,7 @@ bool at_eof(){
 }
 
 static void program();
+static Node* function();
 static Node* stmt();
 static Node* expr();
 static Node* assign();
@@ -128,9 +129,25 @@ static Node *code[100];
 static void program(){
     int i = 0;
     while(!at_eof()){
-        code[i++] = stmt();
+        code[i++] = function();
     }
     code[i] = NULL;
+}
+
+static Node* function(){
+    Node *node = new_node(ND_FUNC);
+    
+    Token *tok = consume_ident();
+    if(!tok){
+        error_at(tok->str, "function name expected");
+    }
+    expect("(");
+    node->name = tok->str;
+    node->len = tok->len;
+    node->args = new_args();
+    expect("{");
+    node->block = new_block();
+    return node;
 }
 
 static Node* stmt(){

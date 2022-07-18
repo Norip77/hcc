@@ -8,7 +8,7 @@ hcc: $(OBJS)
 $(OBJS): hcc.h
 
 test: hcc
-	./test.sh
+	./test2.sh
 
 clean:
 	rm -f hcc *.o *~ tmp* *.out

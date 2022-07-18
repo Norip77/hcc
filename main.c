@@ -36,16 +36,19 @@ int main(int argc, char **argv){
     Node **code = parse(token);
 
     printf(".intel_syntax noprefix\n");
-    printf(".globl main\n");
-    printf("main:\n");
 
-    printf("\tpush rbp\n");
-    printf("\tmov rbp, rsp\n");
-    printf("\tsub rsp, 208\n");
+    for(int i = 0; code[i]; ++i){    
+        
+        char name[64];
+        strncpy(name, code[i]->name, code[i]->len); 
+        printf(".globl %s\n%s:\n", name, name);
+        printf("\tpush rbp\n");
+        printf("\tmov rbp, rsp\n");
+        printf("\tsub rsp, 208\n");
+        for(Node *node = code[i]->block; node; node = node->block){
 
-
-    for(int i = 0; code[i]; ++i){
-        codegen(code[i]);
+            codegen(node);
+        }
         printf("\tpop rax\n");
     }
     printf("\tmov rsp,rbp\n");
