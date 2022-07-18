@@ -37,19 +37,28 @@ int main(int argc, char **argv){
 
     printf(".intel_syntax noprefix\n");
 
+    cur_func = 0;
     for(int i = 0; code[i]; ++i){    
         
         char name[64];
         strncpy(name, code[i]->name, code[i]->len); 
+        name[code[i]->len] = '\0';
         printf(".globl %s\n%s:\n", name, name);
         printf("\tpush rbp\n");
         printf("\tmov rbp, rsp\n");
         printf("\tsub rsp, 208\n");
+        
+        int j = 0;
+        for(Node *node = code[i]->args; node; node = node->args, j++){
+            printf("\tmov [rbp - %d], %s\n", node->offset, args[j]);
+        }
+
         for(Node *node = code[i]->block; node; node = node->block){
 
             codegen(node);
         }
         printf("\tpop rax\n");
+        ++cur_func;
     }
     printf("\tmov rsp,rbp\n");
     printf("\tpop rbx\n");

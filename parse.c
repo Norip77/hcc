@@ -11,10 +11,11 @@ struct LVar
     int offset;
 };
 
-LVar *locals;
+LVar *locals[128];
+int cur_func = 0;
 
 LVar* find_lvar(Token *token){
-    for(LVar *var = locals; var; var = var->next){
+    for(LVar *var = locals[cur_func]; var; var = var->next){
         if(var->len == token->len && !strncmp(token->str, var->name, var->len)){
             return var;
         }
@@ -129,7 +130,9 @@ static Node *code[100];
 static void program(){
     int i = 0;
     while(!at_eof()){
+        locals[cur_func] = calloc(1, sizeof(LVar));
         code[i++] = function();
+        ++cur_func;
     }
     code[i] = NULL;
 }
@@ -317,12 +320,12 @@ static Node* primary(){
             node->offset = lvar->offset;
         }else{
             lvar = calloc(1, sizeof(LVar));
-            lvar->next = locals;
+            lvar->next = locals[cur_func];
             lvar->name = tok->str;
             lvar->len = tok->len;
-            lvar->offset = locals->offset + 8;
+            lvar->offset = locals[cur_func]->offset + 8;
             node->offset = lvar->offset;
-            locals = lvar;
+            locals[cur_func] = lvar;
         }
         return node;
     }
@@ -331,7 +334,7 @@ static Node* primary(){
 
 Node** parse(Token *tok){
     token = tok;
-    locals = calloc(1, sizeof(LVar));
+    
     program();
     return code;
 }

@@ -84,3 +84,6 @@ struct Type
 Node** parse(Token *tok);
 
 void codegen(Node *node);
+
+extern char *args[6];
+extern int cur_func;
