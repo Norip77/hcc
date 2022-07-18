@@ -2,14 +2,7 @@
 
 static Token *token;
 
-typedef struct LVar LVar;
-struct LVar
-{
-    LVar *next;
-    char *name;
-    int len;
-    int offset;
-};
+
 
 LVar *locals[128];
 int cur_func = 0;
@@ -62,7 +55,7 @@ Token* consume_ident(){
     if(token->kind != TK_IDENT){
         return NULL;
     }
-    Token* p = token;
+    Token *p = token;
     token = token->next;
     return p;
 }
@@ -76,6 +69,31 @@ bool consume_tokkind(TokenKind kind){
 }
 
 
+
+Node* consume_decl_val(){
+    
+    switch (token->kind) {
+    case TK_INT:
+        
+        break;
+    default:
+        return NULL;
+    }
+    token = token->next;
+    Token *tok = consume_ident();
+    if(!tok){
+        error_at(token->str, "not identifier");
+    }
+    Node *node = new_node(ND_DECL);
+    LVar *lvar = calloc(1, sizeof(LVar));
+    lvar->next = locals[cur_func];
+    lvar->name = tok->str;
+    lvar->len = tok->len;
+    lvar->offset = locals[cur_func]->offset + 8;
+    node->offset = lvar->offset;
+    locals[cur_func] = lvar;
+    return node;
+}
 
 int expect_number(){
     if (token->kind != TK_NUM){
@@ -112,6 +130,26 @@ Node *new_block(){
     return head;
 }
 
+Node *new_args_decl(){
+    if(consume(")")) return NULL;
+    Node *node = consume_decl_val();
+    if(!node){
+        error_at(token->str,"must be declaration");
+    }
+    Node *head = node;
+    Node **pp = &head;
+    while (!consume(")")){
+        expect(",");
+        pp = &(*pp)->args;
+        node = consume_decl_val();
+        if(!node){
+            error_at(token->str,"must be declaration");
+        }
+        *pp = node;
+    }
+    return head;
+}
+
 Node *new_args(){
     if(consume(")")) return NULL;
     Node *head = expr();
@@ -124,13 +162,15 @@ Node *new_args(){
     return head;
 }
 
-
 static Node *code[100];
 
 static void program(){
     int i = 0;
     while(!at_eof()){
         locals[cur_func] = calloc(1, sizeof(LVar));
+        if(!consume_tokkind(TK_INT)){
+            error_at(token->str, "not declaration");
+        }
         code[i++] = function();
         ++cur_func;
     }
@@ -147,7 +187,7 @@ static Node* function(){
     expect("(");
     node->name = tok->str;
     node->len = tok->len;
-    node->args = new_args();
+    node->args = new_args_decl();
     expect("{");
     node->block = new_block();
     return node;
@@ -155,6 +195,11 @@ static Node* function(){
 
 static Node* stmt(){
     Node *node;
+
+    if(consume_decl_val()){
+        expect(";");
+        return new_node(ND_DECL);
+    }
 
     if(consume("{")){
         node = new_node(ND_BLOCK);
@@ -319,13 +364,7 @@ static Node* primary(){
         if(lvar){
             node->offset = lvar->offset;
         }else{
-            lvar = calloc(1, sizeof(LVar));
-            lvar->next = locals[cur_func];
-            lvar->name = tok->str;
-            lvar->len = tok->len;
-            lvar->offset = locals[cur_func]->offset + 8;
-            node->offset = lvar->offset;
-            locals[cur_func] = lvar;
+            error_at(tok->str, "variable is not declarated");
         }
         return node;
     }

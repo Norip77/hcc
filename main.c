@@ -46,7 +46,7 @@ int main(int argc, char **argv){
         printf(".globl %s\n%s:\n", name, name);
         printf("\tpush rbp\n");
         printf("\tmov rbp, rsp\n");
-        printf("\tsub rsp, 208\n");
+        printf("\tsub rsp, %d\n", locals[cur_func]->offset);
         
         int j = 0;
         for(Node *node = code[i]->args; node; node = node->args, j++){

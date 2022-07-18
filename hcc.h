@@ -14,6 +14,7 @@ typedef enum{
     TK_ELSE,
     TK_WHILE,
     TK_FOR,
+    TK_INT,
     TK_EOF
 }TokenKind;
 
@@ -51,7 +52,8 @@ typedef enum{
     ND_FUNC,
     ND_CALL,
     ND_ADDR,
-    ND_DEREF
+    ND_DEREF,
+    ND_DECL
 } NodeKind;
 
 typedef struct Node Node;
@@ -80,10 +82,19 @@ struct Type
     Type *base;
 };
 
+typedef struct LVar LVar;
+struct LVar
+{
+    LVar *next;
+    char *name;
+    int len;
+    int offset;
+};
 
 Node** parse(Token *tok);
 
 void codegen(Node *node);
 
+extern LVar *locals[128];
 extern char *args[6];
 extern int cur_func;

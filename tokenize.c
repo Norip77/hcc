@@ -10,6 +10,7 @@ static struct
     {"else", TK_ELSE},
     {"while", TK_WHILE},
     {"for", TK_FOR},
+    {"int", TK_INT},
     {NULL, 0}
 };
 
