@@ -35,6 +35,13 @@ Node *new_num(int val){
     return node;
 }
 
+Type* new_type(TypeKind kind, Type *ptr_to){
+    Type *type = calloc(1, sizeof(Type));
+    type->kind = kind;
+    type->ptr_to = ptr_to;
+    return type;
+}
+
 
 bool consume(char *op){
     if(token->kind != TK_RESERVED || strlen(op) != token->len || strncmp(token->str, op, token->len)){
@@ -68,18 +75,29 @@ bool consume_tokkind(TokenKind kind){
     return true;
 }
 
-
+// Type* consume_type(){
+//     Type *type;
+//     switch(token->kind){
+//         case TK_INT:
+//             new_type(TY_INT, consume_type());
+//     }
+// }
 
 Node* consume_decl_val(){
-    
+    Type *type;
     switch (token->kind) {
     case TK_INT:
-        
+        type = new_type(TY_INT, NULL);
         break;
     default:
         return NULL;
     }
+    
     token = token->next;
+    while(token->kind == TK_RESERVED && token->str[0] == '*'){
+        type = new_type(TY_PTR, type);
+        token = token->next;
+    }
     Token *tok = consume_ident();
     if(!tok){
         error_at(token->str, "not identifier");
@@ -90,6 +108,7 @@ Node* consume_decl_val(){
     lvar->name = tok->str;
     lvar->len = tok->len;
     lvar->offset = locals[cur_func]->offset + 8;
+    lvar->type = type;
     node->offset = lvar->offset;
     locals[cur_func] = lvar;
     return node;
@@ -363,6 +382,7 @@ static Node* primary(){
         LVar *lvar = find_lvar(tok);
         if(lvar){
             node->offset = lvar->offset;
+            node->ty = lvar->type;
         }else{
             error_at(tok->str, "variable is not declarated");
         }

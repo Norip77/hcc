@@ -60,7 +60,7 @@ int main(int argc, char **argv){
         printf("\tpop rax\n");
         ++cur_func;
     }
-    printf("\tmov rsp,rbp\n");
+    printf("\tmov rsp, rbp\n");
     printf("\tpop rbx\n");
         
     printf("\tret\n");

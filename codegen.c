@@ -1,6 +1,10 @@
 #include "hcc.h"
 
 static void gen_lval(Node *node){
+    if(node->kind == ND_DEREF){
+        codegen(node->lhs);
+        return;
+    }
     if(node->kind != ND_LVAR){
         error("not lvar");
     }
@@ -83,6 +87,8 @@ void codegen(Node *node){
             printf("\tpop rax\n");
             printf("\tmov rax, [rax]\n");
             printf("\tpush rax\n");
+            return;
+        case ND_DECL:
             return;
         case ND_RETURN:
             codegen(node->lhs);

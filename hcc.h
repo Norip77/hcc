@@ -79,7 +79,7 @@ typedef enum{
 struct Type
 {
     TypeKind kind;
-    Type *base;
+    Type *ptr_to;
 };
 
 typedef struct LVar LVar;
@@ -89,6 +89,7 @@ struct LVar
     char *name;
     int len;
     int offset;
+    Type *type;
 };
 
 Node** parse(Token *tok);
